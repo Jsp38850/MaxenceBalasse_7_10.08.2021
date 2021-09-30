@@ -11,7 +11,7 @@ router.post("/login", user.connect_to_account);//Route Post pour Connexion
 
 router.get("/getone", auth, user.get_user_infos);//Affiche les infos utilisateur 
 
-router.post("/changeavatar", auth, multer, user.change_avatar);
+router.post("/changeavatar", auth, multer, user.change_avatar);//Permet de changer d'avatar
 
 router.delete("/deleteaccount", auth, user.delete_the_account);//Route suppresion compte
 

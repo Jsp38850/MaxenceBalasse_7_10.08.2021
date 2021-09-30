@@ -39,7 +39,29 @@
         </div>
       </div>
     </div>
-    <button type="button" class="btn btn-info mb-3">Commentaire</button>
+    <button @click="showcommentaire = !showcommentaire" class="btn btn-info mb-3">Commentaire</button>
+  </div>
+  <!--Affiche les commentaire-->
+  <div v-if="showcommentaire">
+    <div class="container rounded border  shadow mt-5 card" v-for="comment in comments" :key="comment.id">
+      <div class="card-header">
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <h4></h4>
+          </div>
+          <div class="col-md-6">
+            <!--<p>{{ moment(post.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>-->
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <p class="col-12 mt-3">
+            {{ comment.content }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -53,8 +75,10 @@ export default {
   data: function() {
     return {
       posts: [],
+      comments: [],
       title: "",
       content: "",
+      showcommentaire: false
     };
   },
   created: function() {
@@ -63,7 +87,13 @@ export default {
     this.$store.dispatch("getPost").then(function(response) {
       self.posts = response.data;
     });
+    this.$store.dispatch("getComment").then(function(response) {
+        console.log(response.data)
+      self.comments = response.data;
+    });
   },
+
+
   methods: {
     createPost: function() {
       this.$store
@@ -81,9 +111,8 @@ export default {
         );
     },
   },
+
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -132,6 +132,20 @@ const store = createStore({
           });
       });
     },
+
+    /*Affiche les commentaires*/
+    getComment: () => {
+        return new Promise((resolve, reject) => {
+          instance
+            .get("post/comments")
+            .then(function(response) {
+              resolve(response);
+            })
+            .catch(function(error) {
+              reject(error);
+            });
+        });
+      },
   },
 });
 

@@ -81,8 +81,7 @@ export default {
     });
   },
    imgProfil: function() {
-      const self = this;
-      this.$store.dispatch("imgProfil").then(
+       this.$store.dispatch("imgProfil").then(
         function() {
 
         },

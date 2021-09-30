@@ -51,6 +51,19 @@ exports.list_all_posts = (req, res) => {
     });
   };
 
+//Obtenir les commentaires sous un post
+exports.retrieve_comments = (req, res) => {
+    const postId = req.body.post_id;
+
+    Comment.get(postId, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message: err.message || "Une erreur s'est produite lors de la récupération des commentaires",
+            });
+        else res.send(data);
+    });
+};
+
 //Supprime un commentaire
 exports.delete_a_comment = (req, res) => {
     const commentId = req.body.comment_id;
@@ -58,7 +71,7 @@ exports.delete_a_comment = (req, res) => {
     Comment.delete(commentId, (err, data) => {
         if (err) {
             res.status(500).send({
-                message: "Erreur lors de la suppression du message avec l'identifiant :" + postId,
+                message: "Erreur suppression commentaire",
             });
         } else res.send(data);
     });
