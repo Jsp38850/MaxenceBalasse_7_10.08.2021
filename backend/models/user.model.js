@@ -8,7 +8,6 @@ const User = function (user) {
   this.lastname = user.lastname;
   this.password = user.password;
   this.avatar = user.avatar;
-  this.bio = user.bio;
   this.isAdmin = user.isAdmin;
 };
 

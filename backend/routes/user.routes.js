@@ -15,4 +15,5 @@ router.post("/changeavatar", auth, multer, user.change_avatar);//Permet de chang
 
 router.delete("/deleteaccount", auth, user.delete_the_account);//Route suppresion compte
 
+
 module.exports = router;

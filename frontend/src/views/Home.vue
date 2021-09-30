@@ -21,9 +21,10 @@
         <div class="col-md-6">
           <h4>{{ post.lastname }} {{ post.firstname }}</h4>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
           <p>{{ moment(post.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>
         </div>
+        <i class="fas fa-trash-alt col-md-1" style="color:red" @click="deleteMessage"></i>
       </div>
     </div>
     <div class="card-body">
@@ -78,7 +79,7 @@ export default {
       comments: [],
       title: "",
       content: "",
-      showcommentaire: false
+      showcommentaire: false,
     };
   },
   created: function() {
@@ -88,14 +89,15 @@ export default {
       self.posts = response.data;
     });
     this.$store.dispatch("getComment").then(function(response) {
-        console.log(response.data)
+      console.log(response.data);
       self.comments = response.data;
     });
   },
 
-
   methods: {
-    createPost: function() {
+    createPost: function(e) {
+      e.preventDefault();
+      const self = this;
       this.$store
         .dispatch("createPost", {
           title: this.title,
@@ -104,14 +106,28 @@ export default {
         .then(
           function() {
             console.log("Post créé");
+            self.$router.go();
           },
           function(error) {
             console.log(error);
           }
         );
     },
-  },
 
+    deleteMessage: function(event) {
+      event.preventDefault();
+      const self = this;
+      this.$store.dispatch("deleteMessage").then(
+        function() {
+          console.log("Message supprimer");
+          self.$router.push("/home");
+        },
+        function(error) {
+          console.log(error);
+        }
+      );
+    },
+  },
 };
 </script>
 

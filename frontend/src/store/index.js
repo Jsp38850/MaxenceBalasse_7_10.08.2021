@@ -64,6 +64,26 @@ const store = createStore({
       });
     },
 
+    /*Supprimer message*/
+    deleteMessage: () => {
+      return new Promise((resolve, reject) => {
+        instance
+          .delete("post/deletepost", {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          })
+          .then(function() {
+            if (confirm("Etes vous sûr de vouloir supprimer votre compte ? ")) {
+              resolve(true);
+            }
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
+
     /*Crée un compte utilisateur*/
     createAccount: ({ commit }, userInfos) => {
       commit("setStatus", "loading");
@@ -83,16 +103,36 @@ const store = createStore({
     },
 
     /*Création d'un post*/
-    createPost: () => {
+    createPost: ({ commit }, message) => {
+      commit;
       return new Promise((resolve, reject) => {
         instance
-          .post("post/", {
+          .post("post/", message, {
             headers: {
               Authorization: "Bearer " + localStorage.token,
             },
           })
           .then(function(response) {
-            console.log(response);
+            resolve(response);
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
+
+    /*Mise a jour avatar*/
+    uploadImage: ({ commit }, avatar) => {
+      commit;
+      return new Promise((resolve, reject) => {
+        instance
+          .post("user/changeavatar", avatar, {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+              "Content-Type": "image/*",
+            },
+          })
+          .then(function(response) {
             resolve(response);
           })
           .catch(function(error) {
@@ -135,17 +175,17 @@ const store = createStore({
 
     /*Affiche les commentaires*/
     getComment: () => {
-        return new Promise((resolve, reject) => {
-          instance
-            .get("post/comments")
-            .then(function(response) {
-              resolve(response);
-            })
-            .catch(function(error) {
-              reject(error);
-            });
-        });
-      },
+      return new Promise((resolve, reject) => {
+        instance
+          .get("post/comments")
+          .then(function(response) {
+            resolve(response);
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
   },
 });
 

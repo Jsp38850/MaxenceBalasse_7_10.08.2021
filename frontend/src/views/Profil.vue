@@ -3,9 +3,9 @@
     <div class="main-body">
       <div class="row gutters-sm">
         <div class="col-md-4 mb-3">
-           
           <div class="card">
-              <i class="far fa-images d-flex ml-2 mt-2 iconeProfil" @click="imgProfil"></i>
+            <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input" />
+            <i class="far fa-images d-flex ml-2 mt-2 iconeProfil" @click="imgProfil"></i>
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
                 <img :src="image" alt="Admin" class="rounded-circle img_profil" width="150" />
@@ -36,7 +36,7 @@
               </div>
               <hr />
               <div class="col-sm-12">
-                <button class="btn btn-danger col-12 "  @click="deleteData">Supprimer mon compte</button>
+                <button class="btn btn-danger col-12 " @click="deleteData">Supprimer mon compte</button>
               </div>
             </div>
           </div>
@@ -53,7 +53,7 @@ export default {
       email: "",
       lastname: "",
       firstname: "",
-      image: ""
+      image: "",
     };
   },
   methods: {
@@ -69,27 +69,34 @@ export default {
         }
       );
     },
+
+    uploadImage: function(event) {
+      let data = new FormData();
+      data.append("name", event.target.files[0].name);
+      data.append("file", event.target.files[0]);
+      const self = this;
+      this.$store
+        .dispatch("uploadImage", {
+          avatar: event.target.files[0],
+        })
+        .then(
+          function() {
+            console.log("Avatar modifier");
+            self.$router.go();
+          },
+          function(error) {
+            console.log(error);
+          }
+        );
+    },
   },
   created: function() {
     const self = this;
     this.$store.dispatch("getInfo").then(function(response) {
-        console.log(response)
-      self.email = response.data.email,
-      self.lastname = response.data.lastname,
-      self.firstname = response.data.firstname,
-      self.image = response.data.avatar
+      console.log(response);
+      (self.email = response.data.email), (self.lastname = response.data.lastname), (self.firstname = response.data.firstname), (self.image = response.data.avatar);
     });
   },
-   imgProfil: function() {
-       this.$store.dispatch("imgProfil").then(
-        function() {
-
-        },
-        function(error) {
-          console.log(error);
-        }
-      );
-    },
 };
 </script>
 
@@ -139,6 +146,6 @@ export default {
 }
 
 .iconeProfil:hover {
-    opacity: 100%;
+  opacity: 100%;
 }
 </style>
