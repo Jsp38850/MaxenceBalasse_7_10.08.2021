@@ -98,7 +98,6 @@ exports.change_avatar = function (req, res) {
     const token = req.headers.authorization.split(" ")[1]; 
     const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
     const userId = decodedToken.userId; 
-
     const avatar = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
 
     User.changeAvatar(avatar, userId, (err, data) => {

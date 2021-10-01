@@ -4,8 +4,10 @@
       <div class="row gutters-sm">
         <div class="col-md-4 mb-3">
           <div class="card">
-            <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input" />
-            <i class="far fa-images d-flex ml-2 mt-2 iconeProfil" @click="imgProfil"></i>
+            <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input" style="display:none;" />
+            <label for="file-input">
+            <i class="far fa-images d-flex ml-2 mt-2 iconeProfil"></i>
+            </label>
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
                 <img :src="image" alt="Admin" class="rounded-circle img_profil" width="150" />
@@ -70,15 +72,16 @@ export default {
       );
     },
 
+    /*Mise a jour avatar*/
     uploadImage: function(event) {
       let data = new FormData();
-      data.append("name", event.target.files[0].name);
-      data.append("file", event.target.files[0]);
+      
+      data.append("avatar", event.target.files[0] );
       const self = this;
       this.$store
-        .dispatch("uploadImage", {
-          avatar: event.target.files[0],
-        })
+        .dispatch("uploadImage", 
+           data,
+        )
         .then(
           function() {
             console.log("Avatar modifier");

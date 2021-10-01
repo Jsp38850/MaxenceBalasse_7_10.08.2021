@@ -34,6 +34,7 @@ export default {
     },
   },
   computed: {
+      
     pageAsk: function() {
       if (localStorage.getItem("token") == undefined) {
         return true;

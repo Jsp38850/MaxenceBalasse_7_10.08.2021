@@ -65,16 +65,40 @@ const store = createStore({
     },
 
     /*Supprimer message*/
-    deleteMessage: () => {
+    deleteMessage: ({ commit }, postId) => {
+      commit;
       return new Promise((resolve, reject) => {
         instance
           .delete("post/deletepost", {
             headers: {
               Authorization: "Bearer " + localStorage.token,
             },
+            data: { post_id: postId },
           })
           .then(function() {
-            if (confirm("Etes vous sûr de vouloir supprimer votre compte ? ")) {
+            if (confirm("Etes vous sûr de vouloir supprimer votre message ? ")) {
+              resolve(true);
+            }
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
+
+    /*Supprimer un commentaire*/
+    deleteComment: ({ commit }, commentId) => {
+      commit;
+      return new Promise((resolve, reject) => {
+        instance
+          .delete("post/comments/deletecomment", {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+            data: { comment_id: commentId },
+          })
+          .then(function() {
+            if (confirm("Etes vous sûr de vouloir supprimer votre commentaire ? ")) {
               resolve(true);
             }
           })
@@ -105,9 +129,30 @@ const store = createStore({
     /*Création d'un post*/
     createPost: ({ commit }, message) => {
       commit;
+      console.log(message);
       return new Promise((resolve, reject) => {
         instance
           .post("post/", message, {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          })
+          .then(function(response) {
+            resolve(response);
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
+
+    /*Création un commentaire*/
+    createComment: ({ commit }, message) => {
+      commit;
+      console.log(message);
+      return new Promise((resolve, reject) => {
+        instance
+          .post("post/comments/newcomment", message, {
             headers: {
               Authorization: "Bearer " + localStorage.token,
             },
@@ -129,7 +174,6 @@ const store = createStore({
           .post("user/changeavatar", avatar, {
             headers: {
               Authorization: "Bearer " + localStorage.token,
-              "Content-Type": "image/*",
             },
           })
           .then(function(response) {
@@ -179,6 +223,7 @@ const store = createStore({
         instance
           .get("post/comments")
           .then(function(response) {
+              console.log(response);
             resolve(response);
           })
           .catch(function(error) {
