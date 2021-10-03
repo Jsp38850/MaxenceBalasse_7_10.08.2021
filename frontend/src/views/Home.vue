@@ -9,10 +9,10 @@
         <i class="fa fa-comments" style="width: 64px;font-size: 38px;color: var(--red);"></i>
       </div>
       <textarea v-model="content" class="form-control" type="text" placeholder="Quoi de neuf ?" style="width: 100%; height: 80px" />
+      <input type="file" ref="file" accept="image/*" @change="addImage()" id="file-input-img" style="display:none;" />
       <label for="file-input-img" style="margin-top: 10px; width: 100%">
         <span class="btn border addimage" style=" width: 100%">Ajouter une image</span>
       </label>
-      <input type="file" accept="image/*" id="file-input-img" style="display:none;" />
       <button @click="createPost" class="btn btn-success" style="margin-top: 5px; margin-bottom: 10px; width: 100%">Poster votre message</button>
     </form>
   </section>
@@ -47,6 +47,16 @@
     <button @click="showcommentaire = !showcommentaire" class="btn btn-info mb-3">Afficher les commentaires</button>
     <!--Affiche les commentaire-->
     <div v-if="showcommentaire">
+      <!--Formulaire de commentaire-->
+      <form class="mt-3">
+        <div class="form-group d-flex justify-content-around">
+          <i class="fa fa-comments" style="width: 64px;font-size: 38px;color: var(--red);"></i>
+          <h2>Poster un commentaire</h2>
+          <i class="fa fa-comments" style="width: 64px;font-size: 38px;color: var(--red);"></i>
+        </div>
+        <textarea v-model="content" class="form-control" type="text" placeholder="Votre commentaire..." style="width: 100%; height: 80px" />
+        <button @click="createComment" class="btn btn-success" style="margin-top: 5px; margin-bottom: 10px; width: 100%">Commenter</button>
+      </form>
       <div class="container rounded border  shadow mt-5 card" v-for="comment in comments" :key="comment.id">
         <div class="card-header">
           <div class="row mt-2">
@@ -68,16 +78,6 @@
           </div>
         </div>
       </div>
-      <!--Formulaire de commentaire-->
-      <!-- <form class="mt-3">
-      <div class="form-group d-flex justify-content-around">
-        <i class="fa fa-comments" style="width: 64px;font-size: 38px;color: var(--red);"></i>
-        <h2>Poster un commentaire</h2>
-        <i class="fa fa-comments" style="width: 64px;font-size: 38px;color: var(--red);"></i>
-      </div>
-      <textarea v-model="content" class="form-control" type="text" placeholder="Votre commentaire..." style="width: 100%; height: 80px" />
-      <button @click="createComment" class="btn btn-success" style="margin-top: 5px; margin-bottom: 10px; width: 100%">Commenter</button>
-    </form>-->
     </div>
   </div>
 </template>
@@ -95,6 +95,7 @@ export default {
       comments: [],
       title: "",
       content: "",
+      file: "",
       showcommentaire: false,
     };
   },
@@ -105,24 +106,28 @@ export default {
       self.posts = response.data;
     });
     this.$store.dispatch("getComment").then(function(response) {
-    
       self.comments = response.data;
     });
   },
 
   methods: {
-    createPost: function(event) {
-      event.preventDefault();
-      const self = this;
+    addImage() {
+      this.file = this.$refs.file.files[0];
+    },
+    createPost: function() {
+      let formData = new FormData();
+      formData.append("image", this.file);
+      //const self = this;
       this.$store
         .dispatch("createPost", {
           title: this.title,
           content: this.content,
+          image: this.file,
         })
         .then(
           function() {
             console.log("Post créé");
-            self.$router.go();
+            //self.$router.go();
           },
           function(error) {
             console.log(error);

@@ -53,4 +53,56 @@ Post.delete = (postId, result) => {
     });
 };
 
+//cette fonction permet à l'administrateur d'approuver un message
+Post.approve = (postId, result) => {
+    //les modifications de la requête définissent la colonne adminApproved sur 1 (true) dans le bon message
+    sql.query(`UPDATE posts SET posts.adminApproved = 1 WHERE posts.id = ${postId}`, (err, res) => {
+        if (err) {
+            console.log("error :", err);
+            result(err, null);
+            return;
+        } else {
+            result(null, res[0]);
+            return;
+        }
+    });
+    //Cette requête supprime le statut signalé lorsque la publication est approuvée
+    sql.query(`UPDATE posts SET posts.reported = 0 WHERE posts.id = ${postId}`, (err, res) => {
+        if (err) {
+            console.log("error :", err);
+            result(err, null);
+            return;
+        } else {
+            result(null, res[0]);
+            return;
+        }
+    });
+};
+
+//cette fonction permet aux utilisateurs de signaler un message qu'ils jugent erroné, offensant, etc.
+Post.report = (postId, result) => {
+    //définit le statut de la publication sur signalé en mettant la colonne signalée sur 1 (vrai)
+    sql.query(`UPDATE posts SET posts.reported = 1 WHERE posts.id = ${postId}`, (err, res) => {
+        if (err) {
+            console.log("error :", err);
+            result(err, null);
+            return;
+        } else {
+            result(null, res[0]);
+            return;
+        }
+    });
+    //esupprime l'approbation de l'administrateur au cas où l'administrateur a précédemment approuvé le message
+    sql.query(`UPDATE posts SET posts.adminApproved = 0 WHERE posts.id = ${postId}`, (err, res) => {
+        if (err) {
+            console.log("error :", err);
+            result(err, null);
+            return;
+        } else {
+            result(null, res[0]);
+            return;
+        }
+    });
+};
+
 module.exports = Post;

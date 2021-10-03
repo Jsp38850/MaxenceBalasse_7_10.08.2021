@@ -129,7 +129,6 @@ const store = createStore({
     /*Création d'un post*/
     createPost: ({ commit }, message) => {
       commit;
-      console.log(message);
       return new Promise((resolve, reject) => {
         instance
           .post("post/", message, {
@@ -147,12 +146,11 @@ const store = createStore({
     },
 
     /*Création un commentaire*/
-    createComment: ({ commit }, message) => {
+    createComment: ({ commit }, comment) => {
       commit;
-      console.log(message);
       return new Promise((resolve, reject) => {
         instance
-          .post("post/comments/newcomment", message, {
+          .post("post/comments/newcomment", comment, {
             headers: {
               Authorization: "Bearer " + localStorage.token,
             },
@@ -223,7 +221,7 @@ const store = createStore({
         instance
           .get("post/comments")
           .then(function(response) {
-              console.log(response);
+            console.log(response);
             resolve(response);
           })
           .catch(function(error) {

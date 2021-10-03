@@ -2,7 +2,7 @@ const Post = require("../models/post.model.js");
 const Comment = require("../models/comment.model");
 const jwt = require("jsonwebtoken");
 
-//supprime un message
+//Supprime un message
 exports.delete_a_post = (req, res) => {
   const postId = req.body.post_id;
 
@@ -47,6 +47,8 @@ exports.list_all_posts = (req, res) => {
     else res.send(data);
   });
 };
+
+
 
 //Obtenir les commentaires sous un post
 exports.retrieve_comments = (req, res) => {
@@ -130,4 +132,30 @@ exports.post_something = (req, res) => {
       else res.send(data);
     });
   }
+};
+
+//signaler un post
+exports.report_a_post = (req, res) => {
+    const postId = req.body.post_id;
+
+    Post.report(postId, (err, data) => {
+        if (err) {
+            res.status(500).send({
+                message: "Erreur report publication avec l'identifiant :" + postId,
+            });
+        } else res.send(data);
+    });
+};
+
+//cela approuve un post
+exports.approve_a_post = (req, res) => {
+    const postId = req.body.post_id;
+
+    Post.approve(postId, (err, data) => {
+        if (err) {
+            res.status(500).send({
+                message: "Erreur lors de la suppression du message avec l'identifiant:" + postId,
+            });
+        } else res.send(data);
+    });
 };
