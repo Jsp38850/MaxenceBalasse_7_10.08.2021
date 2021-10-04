@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const dbConfig = require("./config/db.config");
 
 //Connexion Base de donnée
@@ -15,4 +15,4 @@ connection.connect((error) => {
 });
 
 module.exports = connection;
-//**************************//
+//****************************//

@@ -30,19 +30,19 @@ export default {
     },
     Deconnexion: function() {
       localStorage.clear();
+      this.pageAsk = () => true;
       this.$router.push("/");
     },
   },
   computed: {
-      
-    pageAsk: function() {
+    pageAsk: () => {
       if (localStorage.getItem("token") == undefined) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     },
   },
+  created: function() {},
 };
 </script>
 

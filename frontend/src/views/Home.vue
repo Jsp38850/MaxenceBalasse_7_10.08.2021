@@ -25,10 +25,13 @@
         <div class="col-md-4">
           <h4>{{ post.lastname }} {{ post.firstname }}</h4>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
           <p>{{ moment(post.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>
         </div>
-        <i title="Supprimer votre message" class="fas fa-trash-alt col-md-1" style="color:red" @click="deleteMessage(post.id)"></i>
+        <div class="col-md-1">
+          <i title="Supprimer votre message" class="fas fa-trash-alt mr-2 " style="color:red" @click="deleteMessage(post.id)"></i>
+          <i title="Signaler ce post" class="fas fa-comment-slash " style="color:blue" @click="reportMessage(post.id)"></i>
+        </div>
       </div>
     </div>
     <div class="card-body">
@@ -63,8 +66,10 @@
             <div class="col-md-6">
               <h4>{{ comment.lastname }}</h4>
             </div>
-            <i title="Supprimer votre commentaire" class="fas fa-trash-alt col-md-1" style="color:red" @click="deleteComment(comment.post_id)"></i>
-
+            <div class="col-md-1">
+              <i title="Supprimer votre message" class="fas fa-trash-alt mr-2 " style="color:red" @click="deleteMessage(comment.post.id)"></i>
+              <i title="Signaler ce post" class="fas fa-comment-slash " style="color:blue" @click="reportMessage(comment.post.id)"></i>
+            </div>
             <div class="col-md-6">
               <!--<p>{{ moment(post.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>-->
             </div>

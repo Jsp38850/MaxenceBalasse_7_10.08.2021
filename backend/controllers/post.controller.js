@@ -147,6 +147,8 @@ exports.report_a_post = (req, res) => {
     });
 };
 
+
+
 //cela approuve un post
 exports.approve_a_post = (req, res) => {
     const postId = req.body.post_id;
@@ -154,7 +156,7 @@ exports.approve_a_post = (req, res) => {
     Post.approve(postId, (err, data) => {
         if (err) {
             res.status(500).send({
-                message: "Erreur lors de la suppression du message avec l'identifiant:" + postId,
+                message: "Erreur avec l'identifiant:" + postId,
             });
         } else res.send(data);
     });
