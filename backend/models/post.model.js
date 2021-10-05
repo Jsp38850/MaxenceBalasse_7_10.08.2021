@@ -7,7 +7,8 @@ const Post = function (post) {
   this.image = post.image;
   this.adminApproved = post.adminApproved;
   this.reported = post.reported;
-  this.created_at = post.created_at
+  this.created_at = post.created_at;
+
 };
 
 //Cette fonction récupère toutes les informations qui apparaîtront sur les posts 

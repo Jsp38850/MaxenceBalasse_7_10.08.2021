@@ -1,14 +1,29 @@
 <template>
-  <h1><u>Page Erreur</u></h1>
+  <h1>Page Erreur</h1>
   <section class="error-container">
     <span>4</span>
     <span><span class="screen-reader-text">0</span></span>
     <span>4</span>
   </section>
   <div class="link-container">
-    <a  href="/" class="more-link">Retour à la page d'accueil</a>
+    <a class="more-link" @click="DeleteLocal">Retour à la page d'accueil</a>
   </div>
 </template>
+
+
+<script>
+
+export default {
+  name: "App",
+
+  methods: {
+    DeleteLocal: function() {
+      localStorage.clear();
+      this.$router.push("/");
+    },
+  },
+}
+</script>
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,600,700");
@@ -24,7 +39,7 @@
   display: inline-block;
   line-height: 0.7;
   position: relative;
-  color: #ffb485;
+  color: #ff690b;
 }
 .error-container > span {
   display: inline-block;
@@ -32,11 +47,11 @@
   vertical-align: middle;
 }
 .error-container > span:nth-of-type(1) {
-  color: #d1f2a5;
+  color: #2b4d00;
   animation: colordancing 4s infinite;
 }
 .error-container > span:nth-of-type(3) {
-  color: #f56991;
+  color: #ee0547;
   animation: colordancing2 4s infinite;
 }
 .error-container > span:nth-of-type(2) {
@@ -54,7 +69,7 @@
   width: inherit;
   height: inherit;
   border-radius: 999px;
-  box-shadow: inset 30px 0 0 rgba(209, 242, 165, 0.4), inset 0 30px 0 rgba(239, 250, 180, 0.4), inset -30px 0 0 rgba(255, 196, 140, 0.4), inset 0 -30px 0 rgba(245, 105, 145, 0.4);
+  box-shadow: inset 30px 0 0 rgba(141, 246, 4, 0.4), inset 0 30px 0 rgba(239, 250, 180, 0.4), inset -30px 0 0 rgba(255, 196, 140, 0.4), inset 0 -30px 0 rgba(245, 105, 145, 0.4);
   animation: shadowsdancing 4s infinite;
 }
 .error-container > span:nth-of-type(2):before {
@@ -87,40 +102,40 @@
 }
 @keyframes colordancing {
   0% {
-    color: #d1f2a5;
+    color: #335a00;
   }
   25% {
-    color: #f56991;
+    color: #ff0048;
   }
   50% {
-    color: #ffc48c;
+    color: #ff7b00;
   }
   75% {
-    color: #effab4;
+    color: #d9ff00;
   }
   100% {
-    color: #d1f2a5;
+    color: #91ff00;
   }
 }
 @keyframes colordancing2 {
   0% {
-    color: #ffc48c;
+    color: #ff7b00;
   }
   25% {
-    color: #effab4;
+    color: #d9ff00;
   }
   50% {
-    color: #d1f2a5;
+    color: #91ff00;
   }
   75% {
-    color: #f56991;
+    color: #ff0048;
   }
   100% {
-    color: #ffc48c;
+    color: #ff7b00;
   }
 }
 
-/* demo stuff */
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -146,10 +161,10 @@ h1 {
 a.more-link {
   text-transform: uppercase;
   font-size: 13px;
-  background-color: #92a4ad;
+  background-color: #6bceff;
   padding: 10px 15px;
   border-radius: 0;
-  color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   display: inline-block;
   margin-right: 5px;
   margin-bottom: 5px;

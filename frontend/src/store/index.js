@@ -31,9 +31,9 @@ const store = createStore({
         instance
           .post("user/login/", userInfos)
           .then(function(response) {
-            localStorage.token = response.data.token;
             commit("setStatus", "connect");
             commit("logUser", response.data);
+            localStorage.token = response.data.token;
             resolve(response);
           })
           .catch(function() {
@@ -108,6 +108,31 @@ const store = createStore({
       });
     },
 
+    /*Signaler message*/
+    reportMessage: ({ commit }, postId) => {
+      commit;
+      return new Promise((resolve, reject) => {
+        instance
+          .put(
+            "post/reportpost",
+            { post_id: postId },
+            {
+              headers: {
+                Authorization: "Bearer " + localStorage.token,
+              },
+            }
+          )
+          .then(function() {
+            if (confirm("Etes vous sûr de vouloir signaler ce message ? ")) {
+              resolve(true);
+            }
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
+
     /*Crée un compte utilisateur*/
     createAccount: ({ commit }, userInfos) => {
       commit("setStatus", "loading");
@@ -127,30 +152,11 @@ const store = createStore({
     },
 
     /*Création d'un post*/
-    createPost: ({ commit }, message) => {
+    createPost: ({ commit }, formData) => {
       commit;
       return new Promise((resolve, reject) => {
         instance
-          .post("post/", message, {
-            headers: {
-              Authorization: "Bearer " + localStorage.token,
-            },
-          })
-          .then(function(response) {
-            resolve(response);
-          })
-          .catch(function(error) {
-            reject(error);
-          });
-      });
-    },
-
-    /*Création un commentaire*/
-    createComment: ({ commit }, comment) => {
-      commit;
-      return new Promise((resolve, reject) => {
-        instance
-          .post("post/comments/newcomment", comment, {
+          .post("post/", formData, {
             headers: {
               Authorization: "Bearer " + localStorage.token,
             },
@@ -215,13 +221,39 @@ const store = createStore({
       });
     },
 
-    /*Affiche les commentaires*/
-    getComment: () => {
+    /*Création un commentaire*/
+    createComment: ({ commit }, comment) => {
+      commit;
+      console.log(comment);
       return new Promise((resolve, reject) => {
         instance
-          .get("post/comments")
+          .post("post/comments/newcomment", comment, {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          })
           .then(function(response) {
-            console.log(response);
+            resolve(response);
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
+    /*Affiche les commentaires*/
+    showComments: ({ commit }, post_id) => {
+      commit, console.log(post_id);
+      return new Promise((resolve, reject) => {
+        instance
+          .get("post/comments", {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+            params: {
+              post_id: post_id,
+            },
+          })
+          .then(function(response) {
             resolve(response);
           })
           .catch(function(error) {

@@ -4,4 +4,4 @@ module.exports = {
     USER: "Nom",
     PASSWORD: "Mot de passe",
     DB: "Nom de la base de donnée"
-  };
+  }; 

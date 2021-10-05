@@ -13,21 +13,21 @@
 
             <form>
               <div class="form-floating mb-3">
-                <label for="floatingEmail"></label>
+                <label for="floatingEmail" :hidden="true">Champ Email</label>
                 <input v-model="email" type="text" class="form-control" id="floatingEmail" placeholder="Entrez Votre Adresse Email" />
               </div>
               <div class="d-flex justiy-content-between mb-3" v-if="mode == 'Inscription'">
                 <div class="form-floating">
-                  <label for="floatingName"></label>
+                  <label for="floatingName" :hidden="true">Champ lastname</label>
                   <input v-model="lastname" type="text" class="form-control" id="floatingName" placeholder="Votre Nom ..." />
                 </div>
                 <div class="form-floating ml-2">
-                  <label for="floatingPrenom"></label>
+                  <label for="floatingPrenom" :hidden="true">Champ firstname</label>
                   <input v-model="firstname" type="text" class="form-control" id="floatingPrenom" placeholder="Votre Prenom ..." />
                 </div>
               </div>
               <div class="form-floating mb-3">
-                <label for="floatingPassword"></label>
+                <label for="floatingPassword" :hidden="true">Champ Password</label>
                 <input v-model="password" type="password" class="form-control" id="floatingPassword" placeholder="Entrez Votre Mot de passe" />
               </div>
               <div class="form-row" v-if="mode == 'Login' && status == 'error_login'">
@@ -148,7 +148,6 @@ export default {
 }
 .card_action {
   color: blue;
-  text-decoration: underline;
 }
 
 .card_action:hover {
@@ -188,7 +187,4 @@ export default {
   }
 }
 
-h1 {
-  text-decoration: underline;
-}
 </style>

@@ -21,7 +21,8 @@ const routes = [
         path: '/Home',
         component: Home,
         meta: {
-            title: 'Accueil | Groupomania'
+            title: 'Accueil | Groupomania',
+            plainLayout: true,
         }
     },
     {
@@ -30,7 +31,8 @@ const routes = [
         path: '/Profil',
         component: Profil,
         meta: {
-            title: 'Profil | Groupomania'
+            title: 'Profil | Groupomania',
+            plainLayout: true,
         }
     }, {
         /*Page 404 (erreur de lien)*/

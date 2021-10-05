@@ -3,7 +3,7 @@
     <a href="" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
       <img class="bi me-2" src="./assets/logo.png" alt="" width="300" height="82" role="img" aria-label="Bootstrap" />
     </a>
-    <div :hidden="pageAsk">
+    <div v-if="$route.meta.plainLayout">
       <i title="Acceder à votre profil" class="fas fa-user-circle icone " @click="profil" style=" color:green;  "></i>
       <i title="Deconnexion" class="fas fa-sign-out-alt icone" style="color: red;" @click="Deconnexion"></i>
       <i title="Retour au post" class="fas fa-home icone" @click="Home"></i>
@@ -30,19 +30,9 @@ export default {
     },
     Deconnexion: function() {
       localStorage.clear();
-      this.pageAsk = () => true;
       this.$router.push("/");
     },
   },
-  computed: {
-    pageAsk: () => {
-      if (localStorage.getItem("token") == undefined) {
-        return true;
-      }
-      return false;
-    },
-  },
-  created: function() {},
 };
 </script>
 

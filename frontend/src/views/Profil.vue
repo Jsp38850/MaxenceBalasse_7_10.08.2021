@@ -5,14 +5,15 @@
         <div class="col-md-4 mb-3">
           <div class="card">
             <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input" style="display:none;" />
-            <label for="file-input">
-            <i class="far fa-images d-flex ml-2 mt-2 iconeProfil"></i>
-            </label>
+            <label for="file-input" :hidden="true">Image Avatar</label>
+            <i class="far fa-images d-flex ml-2 mt-2 iconeProfil" id="file-input"></i>
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
-                <img :src="image" alt="Admin" class="rounded-circle img_profil" width="150" />
+                <img :src="image" alt="Avatar" class="rounded-circle img_profil" width="150" />
                 <div class="mt-3">
                   <h4>{{ lastname }} {{ firstname }}</h4>
+                  <span v-if=" isAdmin == 1" class="labelAdmin">Administrateur</span>
+                  <span v-else class="labelMembre">Membre</span>
                 </div>
               </div>
             </div>
@@ -46,8 +47,6 @@
       </div>
     </div>
   </div>
-
-  
 </template>
 
 <script>
@@ -58,6 +57,7 @@ export default {
       lastname: "",
       firstname: "",
       image: "",
+     
     };
   },
   methods: {
@@ -77,31 +77,36 @@ export default {
     /*Mise a jour avatar*/
     uploadImage: function(event) {
       let data = new FormData();
-      
-      data.append("avatar", event.target.files[0] );
+
+      data.append("avatar", event.target.files[0]);
       const self = this;
-      this.$store
-        .dispatch("uploadImage", 
-           data,
-        )
-        .then(
-          function() {
-            console.log("Avatar modifier");
-            self.$router.go();
-          },
-          function(error) {
-            console.log(error);
-          }
-        );
+      this.$store.dispatch("uploadImage", data).then(
+        function() {
+          console.log("Avatar modifier");
+          self.$router.go();
+        },
+        function(error) {
+          console.log(error);
+        }
+      );
     },
   },
+
   created: function() {
     const self = this;
     this.$store.dispatch("getInfo").then(function(response) {
       console.log(response);
-      (self.email = response.data.email), (self.lastname = response.data.lastname), (self.firstname = response.data.firstname), (self.image = response.data.avatar);
+      (self.email = response.data.email), (self.lastname = response.data.lastname), (self.firstname = response.data.firstname), (self.image = response.data.avatar), (self.isAdmin = response.data.isAdmin);
     });
   },
+  /**computed: {
+    Administration: () => {
+      if (post.idadmin == 0) {
+        return true;
+      }
+      return false;
+    },
+  },**/
 };
 </script>
 
@@ -152,5 +157,17 @@ export default {
 
 .iconeProfil:hover {
   opacity: 100%;
+}
+
+.labelAdmin {
+  background-color: blue;
+  color: white;
+  padding: 5px;
+}
+
+.labelMembre {
+  background-color: rgb(3, 121, 19);
+  color: white;
+  padding: 5px;
 }
 </style>

@@ -44,15 +44,27 @@ exports.list_all_posts = (req, res) => {
       res.status(500).send({
         message: err.message || "Une erreur s'est produite lors de la récupération des messages",
       });
-    else res.send(data);
+    else {
+      /*let posts = [];
+      data.forEach((post) => {
+         Comment.get(post.id, (err, data) => {
+          if (err)
+            res.status(500).send({
+              message: err.message || "Une erreur s'est produite lors de la récupération des commentaires",
+            });
+          else post.comments = data;
+        });
+        posts.push(post);
+      });
+      console.log(posts);*/
+      res.send(data);
+    }
   });
 };
 
-
-
 //Obtenir les commentaires sous un post
 exports.retrieve_comments = (req, res) => {
-  const postId = req.body.post_id;
+  const postId = req.query.post_id;
 
   Comment.get(postId, (err, data) => {
     if (err)
@@ -136,28 +148,26 @@ exports.post_something = (req, res) => {
 
 //signaler un post
 exports.report_a_post = (req, res) => {
-    const postId = req.body.post_id;
+  const postId = req.body.post_id;
 
-    Post.report(postId, (err, data) => {
-        if (err) {
-            res.status(500).send({
-                message: "Erreur report publication avec l'identifiant :" + postId,
-            });
-        } else res.send(data);
-    });
+  Post.report(postId, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: "Erreur report publication avec l'identifiant :" + postId,
+      });
+    } else res.send(data);
+  });
 };
-
-
 
 //cela approuve un post
 exports.approve_a_post = (req, res) => {
-    const postId = req.body.post_id;
+  const postId = req.body.post_id;
 
-    Post.approve(postId, (err, data) => {
-        if (err) {
-            res.status(500).send({
-                message: "Erreur avec l'identifiant:" + postId,
-            });
-        } else res.send(data);
-    });
+  Post.approve(postId, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: "Erreur avec l'identifiant:" + postId,
+      });
+    } else res.send(data);
+  });
 };
