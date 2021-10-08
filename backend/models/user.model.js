@@ -12,8 +12,8 @@ const User = function (user) {
 };
 
 //Création d'un nouveau compte
-User.signup = (newUser, email, result) => {
-  sql.query("SELECT * FROM users where email = ?", email, (err, res) => {
+User.signup = (newUser, result) => {
+  sql.query("SELECT * FROM users where email = ?", newUser.email, (err, res) => {
     if (res.length > 0) {
       result("Email deja existant", null);
       return;
@@ -28,7 +28,6 @@ User.signup = (newUser, email, result) => {
       });
     }
   });
-  
 };
 /*****************************************/
 

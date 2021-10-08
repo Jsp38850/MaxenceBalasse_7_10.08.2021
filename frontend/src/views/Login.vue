@@ -36,6 +36,9 @@
               <div class="form-row" v-if="mode == 'Inscription' && status == 'error_create'">
                 Adresse mail déjà utilisée
               </div>
+              <div class="form-row" v-if="mode == 'Inscription' && isEmail == false">
+                Adresse mail invalide
+              </div>
               <div class="d-grid">
                 <button @click="createAccount" class="btn btn-primary btn-login text-uppercase fw-bold" :disabled="!validatedFields" :class="{ 'button--disabled': !validatedFields }" v-if="mode == 'Inscription'">
                   <span v-if="status == 'created'" id="loading"></span>
@@ -56,6 +59,7 @@
 
 <script>
 import { mapState } from "vuex";
+import isEmail from "validator/lib/isEmail";
 
 export default {
   name: "Login",
@@ -67,6 +71,7 @@ export default {
       lastname: "",
       firstname: "",
       password: "",
+      isEmail: null,
     };
   },
   computed: {
@@ -116,22 +121,26 @@ export default {
     createAccount: function(e) {
       e.preventDefault();
       const self = this;
-      this.$store
-        .dispatch("createAccount", {
-          email: this.email,
-          lastname: this.lastname,
-          firstname: this.firstname,
-          password: this.password,
-        })
-        .then(
-          function() {
-            console.log("Compte créé");
-            self.login();
-          },
-          function(error) {
-            console.log(error);
-          }
-        );
+      if (!isEmail(this.email)) {    
+          this.isEmail = false  
+      } else {
+        this.$store
+          .dispatch("createAccount", {
+            email: this.email,
+            lastname: this.lastname,
+            firstname: this.firstname,
+            password: this.password,
+          })
+          .then(
+            function() {
+              console.log("Compte créé");
+              self.login();
+            },
+            function(error) {
+              console.log(error);
+            }
+          );
+      }
     },
   },
 };
