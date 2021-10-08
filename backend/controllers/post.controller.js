@@ -1,11 +1,11 @@
 const Post = require("../models/post.model.js");
 const Comment = require("../models/comment.model");
 const jwt = require("jsonwebtoken");
+const util = require("util");
 
 //Supprime un message
 exports.delete_a_post = (req, res) => {
   const postId = req.body.post_id;
-
   Post.delete(postId, (err, data) => {
     if (err) {
       res.status(500).send({
@@ -14,20 +14,19 @@ exports.delete_a_post = (req, res) => {
     } else res.send(data);
   });
 };
+/*********************************/
 
 //Commenter un post
 exports.comment_a_post = (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
   const userId = decodedToken.userId;
-
-  //définit un nouveau commentaire avec le corps envoyé par le frontend
+  //Définis un nouveau commentaire avec le corps envoyé par le frontend
   const comment = new Comment({
     post_id: req.body.post_id,
     user_id: userId,
     content: req.body.content,
   });
-
   Comment.createComment(comment, (err, data) => {
     if (err)
       res.status(500).send({
@@ -36,36 +35,34 @@ exports.comment_a_post = (req, res) => {
     else res.send(data);
   });
 };
+/*********************************/
 
-// ceci récupère tous les messages
-exports.list_all_posts = (req, res) => {
-  Post.getAll((err, data) => {
+//Récupère tous les messages
+exports.list_all_posts = async (req, res) => {
+  Post.getAll(async (err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Une erreur s'est produite lors de la récupération des messages",
       });
     else {
-      /*let posts = [];
-      data.forEach((post) => {
-         Comment.get(post.id, (err, data) => {
-          if (err)
-            res.status(500).send({
-              message: err.message || "Une erreur s'est produite lors de la récupération des commentaires",
-            });
-          else post.comments = data;
-        });
-        posts.push(post);
-      });
-      console.log(posts);*/
+      await Promise.all(
+        data.map(async (post) => {
+          let getComment = util.promisify(Comment.get);
+          await getComment(post.id).then((data) => {
+            post.comments = data;
+          });
+          return post;
+        })
+      );
       res.send(data);
     }
   });
 };
+/*********************************/
 
 //Obtenir les commentaires sous un post
 exports.retrieve_comments = (req, res) => {
   const postId = req.query.post_id;
-
   Comment.get(postId, (err, data) => {
     if (err)
       res.status(500).send({
@@ -74,21 +71,22 @@ exports.retrieve_comments = (req, res) => {
     else res.send(data);
   });
 };
+/*********************************/
 
 //Supprime un commentaire
 exports.delete_a_comment = (req, res) => {
   const commentId = req.body.comment_id;
-
   Comment.delete(commentId, (err, data) => {
     if (err) {
       res.status(500).send({
-        message: "Erreur suppression commentaire",
+        message: "Une erreur s'est produite lors de la suppresion du commentaire",
       });
     } else res.send(data);
   });
 };
+/*********************************/
 
-//cela crée un nouveau message
+//Création d'un nouveau message
 exports.post_something = (req, res) => {
   //Vérifier s'il y a du contenu
   if (!req.body) {
@@ -96,12 +94,10 @@ exports.post_something = (req, res) => {
       message: "Vous devez ajouter du contenu à votre message !",
     });
   }
-
-  //récupération de l'identifiant de l'utilisateur connecté
+  //Récupération de l'identifiant de l'utilisateur connecté
   const token = req.headers.authorization.split(" ")[1];
   const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
   const userId = decodedToken.userId;
-
   //si aucune image n'est envoyée
   if (!req.file) {
     //créer un nouveau message que l'utilisateur a envoyée
@@ -114,7 +110,6 @@ exports.post_something = (req, res) => {
       reported: 0,
       created_at: new Date(),
     });
-
     //enregistrer le message dans la base de données
     Post.createPost(post, (err, data) => {
       if (err)
@@ -134,7 +129,6 @@ exports.post_something = (req, res) => {
       reported: 0,
       created_at: new Date(),
     });
-
     //enregistrer le message dans la base de données
     Post.createPost(post, (err, data) => {
       if (err)
@@ -145,11 +139,11 @@ exports.post_something = (req, res) => {
     });
   }
 };
+/*********************************/
 
-//signaler un post
+//Signaler un post
 exports.report_a_post = (req, res) => {
   const postId = req.body.post_id;
-
   Post.report(postId, (err, data) => {
     if (err) {
       res.status(500).send({
@@ -158,11 +152,11 @@ exports.report_a_post = (req, res) => {
     } else res.send(data);
   });
 };
+/*********************************/
 
-//cela approuve un post
+//Approuver un post (Reserver a isAdmin = 1)
 exports.approve_a_post = (req, res) => {
   const postId = req.body.post_id;
-
   Post.approve(postId, (err, data) => {
     if (err) {
       res.status(500).send({
@@ -171,3 +165,4 @@ exports.approve_a_post = (req, res) => {
     } else res.send(data);
   });
 };
+/*********************************/

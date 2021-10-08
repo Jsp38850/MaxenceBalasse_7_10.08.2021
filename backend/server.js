@@ -1,8 +1,7 @@
 //Création Serveur
 const http = require("http"); //utilisation de http pour transférer des données via le protocole de transfert hypertexte
-const app = require("./app"); //Import app.js 
+const app = require("./app"); //Import app.js
 const db = require("./initDB"); //
-
 
 /***Normaliser un port pour s'assurer que le port fourni est un nombre sinon définir en false.***/
 const normalizePort = (val) => {
@@ -20,7 +19,6 @@ const normalizePort = (val) => {
 /***Réglage du port à 3000 ***/
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
-
 
 /***Traitement des erreurs en cas de dysfonctionnement ***/
 const errorHandler = (error) => {

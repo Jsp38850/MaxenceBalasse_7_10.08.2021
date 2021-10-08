@@ -1,6 +1,5 @@
 //Importation du model user
 const User = require("../models/user.model.js");
-
 sql = require("../initDB");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -15,11 +14,11 @@ schema
   .is()
   .max(20) //max 20 characters
   .has()
-  .uppercase() //at least one uppercase letter
+  .uppercase() //au moins une lettre majuscule
   .has()
-  .lowercase() //at least one lowercase letter
+  .lowercase() //au moins une lettre minuscule
   .has()
-  .digits(1); //at least one digit
+  .digits(1); //au moins un chiffre
 
 //Function Création d'un compte
 exports.create_an_account = function (req, res) {
@@ -75,6 +74,7 @@ exports.create_an_account = function (req, res) {
     });
   }
 };
+/************************/
 
 //function connection au compte
 exports.connect_to_account = function (req, res) {
@@ -84,6 +84,8 @@ exports.connect_to_account = function (req, res) {
   //si l'email et le mot de passe sont renseignés
   if (email && password) {
     User.login(email, password, (err, data) => {
+      console.log(err);
+      console.log(data);
       if (err)
         res.status(500).send({
           message: err.message || "Une erreur s'est produite lors de la connexion au compte !",
@@ -95,6 +97,7 @@ exports.connect_to_account = function (req, res) {
     res.status(500).json({ message: "Vous devez remplir le formulaire de connexion" });
   }
 };
+/************************/
 
 //Obtenir des informations sur un seul utilisateur
 exports.get_user_infos = function (req, res) {
@@ -110,8 +113,9 @@ exports.get_user_infos = function (req, res) {
     } else res.send(data);
   });
 };
+/************************/
 
-//this is for changing the avatar
+//Changer votre avatar
 exports.change_avatar = function (req, res) {
   const token = req.headers.authorization.split(" ")[1];
   const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
@@ -121,11 +125,12 @@ exports.change_avatar = function (req, res) {
   User.changeAvatar(avatar, userId, (err, data) => {
     if (err) {
       res.status(500).send({
-        message: "Error changing avatar !",
+        message: "Erreur lors du changement d'avatar !",
       });
     } else res.send(data);
   });
 };
+/************************/
 
 //Supprimer mon compte
 exports.delete_the_account = function (req, res) {
@@ -141,3 +146,4 @@ exports.delete_the_account = function (req, res) {
     } else res.send(data);
   });
 };
+/************************/

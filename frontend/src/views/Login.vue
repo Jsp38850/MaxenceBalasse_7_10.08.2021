@@ -28,7 +28,7 @@
               </div>
               <div class="form-floating mb-3">
                 <label for="floatingPassword" :hidden="true">Champ Password</label>
-                <input v-model="password" type="password" class="form-control" id="floatingPassword" placeholder="Entrez Votre Mot de passe" />
+                <input v-model="password" type="password" class="form-control" id="floatingPassword" placeholder="Entrez Votre Mot de passe" required />
               </div>
               <div class="form-row" v-if="mode == 'Login' && status == 'error_login'">
                 Adresse mail et/ou mot de passe invalide
@@ -95,6 +95,7 @@ export default {
     switchToCreateAccount: function() {
       this.mode = "Inscription";
     },
+
     login: function(event) {
       if (event) {
         event.preventDefault();
@@ -186,5 +187,4 @@ export default {
     -webkit-transform: rotate(360deg);
   }
 }
-
 </style>

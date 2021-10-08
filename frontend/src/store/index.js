@@ -33,7 +33,7 @@ const store = createStore({
           .then(function(response) {
             commit("setStatus", "connect");
             commit("logUser", response.data);
-            localStorage.token = response.data.token;
+            sessionStorage.token = response.data.token;
             resolve(response);
           })
           .catch(function() {
@@ -42,6 +42,7 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Supprimer compte*/
     deleteData: () => {
@@ -49,12 +50,12 @@ const store = createStore({
         instance
           .delete("user/deleteaccount", {
             headers: {
-              Authorization: "Bearer " + localStorage.token,
+              Authorization: "Bearer " + sessionStorage.token,
             },
           })
           .then(function() {
             if (confirm("Etes vous sûr de vouloir supprimer votre compte ? ")) {
-              localStorage.clear();
+              sessionStorage.clear();
               resolve(true);
             }
           })
@@ -63,6 +64,7 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Supprimer message*/
     deleteMessage: ({ commit }, postId) => {
@@ -71,7 +73,7 @@ const store = createStore({
         instance
           .delete("post/deletepost", {
             headers: {
-              Authorization: "Bearer " + localStorage.token,
+              Authorization: "Bearer " + sessionStorage.token,
             },
             data: { post_id: postId },
           })
@@ -85,6 +87,7 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Supprimer un commentaire*/
     deleteComment: ({ commit }, commentId) => {
@@ -93,7 +96,7 @@ const store = createStore({
         instance
           .delete("post/comments/deletecomment", {
             headers: {
-              Authorization: "Bearer " + localStorage.token,
+              Authorization: "Bearer " + sessionStorage.token,
             },
             data: { comment_id: commentId },
           })
@@ -107,6 +110,33 @@ const store = createStore({
           });
       });
     },
+    /*************************/
+
+    /*Approuve Message*/
+    approuveMessage: ({ commit }, postId) => {
+      commit;
+      return new Promise((resolve, reject) => {
+        instance
+          .put(
+            "post/approvepost",
+            { post_id: postId },
+            {
+              headers: {
+                Authorization: "Bearer " + sessionStorage.token,
+              },
+            }
+          )
+          .then(function() {
+            if (confirm("Etes vous sûr de vouloir approuver votre message ? ")) {
+              resolve(true);
+            }
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+    },
+    /*************************/
 
     /*Signaler message*/
     reportMessage: ({ commit }, postId) => {
@@ -118,7 +148,7 @@ const store = createStore({
             { post_id: postId },
             {
               headers: {
-                Authorization: "Bearer " + localStorage.token,
+                Authorization: "Bearer " + sessionStorage.token,
               },
             }
           )
@@ -132,6 +162,7 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Crée un compte utilisateur*/
     createAccount: ({ commit }, userInfos) => {
@@ -150,6 +181,7 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Création d'un post*/
     createPost: ({ commit }, formData) => {
@@ -158,7 +190,7 @@ const store = createStore({
         instance
           .post("post/", formData, {
             headers: {
-              Authorization: "Bearer " + localStorage.token,
+              Authorization: "Bearer " + sessionStorage.token,
             },
           })
           .then(function(response) {
@@ -169,6 +201,7 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Mise a jour avatar*/
     uploadImage: ({ commit }, avatar) => {
@@ -177,7 +210,7 @@ const store = createStore({
         instance
           .post("user/changeavatar", avatar, {
             headers: {
-              Authorization: "Bearer " + localStorage.token,
+              Authorization: "Bearer " + sessionStorage.token,
             },
           })
           .then(function(response) {
@@ -188,6 +221,7 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Affiche les info utilisateur */
     getInfo: () => {
@@ -195,7 +229,7 @@ const store = createStore({
         instance
           .get("user/getone", {
             headers: {
-              Authorization: "Bearer " + localStorage.token,
+              Authorization: "Bearer " + sessionStorage.token,
             },
           })
           .then(function(response) {
@@ -206,8 +240,9 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
-    /*Affiche les posts*/
+    /*Affiche les posts + Commentaire associé*/
     getPost: () => {
       return new Promise((resolve, reject) => {
         instance
@@ -220,18 +255,22 @@ const store = createStore({
           });
       });
     },
+    /*************************/
 
     /*Création un commentaire*/
-    createComment: ({ commit }, comment) => {
+    createComment: ({ commit }, post) => {
       commit;
-      console.log(comment);
       return new Promise((resolve, reject) => {
         instance
-          .post("post/comments/newcomment", comment, {
-            headers: {
-              Authorization: "Bearer " + localStorage.token,
-            },
-          })
+          .post(
+            "post/comments/newcomment",
+            { post_id: post.id, content: post.comment },
+            {
+              headers: {
+                Authorization: "Bearer " + sessionStorage.token,
+              },
+            }
+          )
           .then(function(response) {
             resolve(response);
           })
@@ -240,27 +279,7 @@ const store = createStore({
           });
       });
     },
-    /*Affiche les commentaires*/
-    showComments: ({ commit }, post_id) => {
-      commit, console.log(post_id);
-      return new Promise((resolve, reject) => {
-        instance
-          .get("post/comments", {
-            headers: {
-              Authorization: "Bearer " + localStorage.token,
-            },
-            params: {
-              post_id: post_id,
-            },
-          })
-          .then(function(response) {
-            resolve(response);
-          })
-          .catch(function(error) {
-            reject(error);
-          });
-      });
-    },
+    /*************************/
   },
 });
 

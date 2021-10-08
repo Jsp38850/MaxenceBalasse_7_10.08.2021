@@ -29,7 +29,7 @@ export default {
       this.$router.push("Home");
     },
     Deconnexion: function() {
-      localStorage.clear();
+      sessionStorage.clear();
       this.$router.push("/");
     },
   },

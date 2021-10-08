@@ -10,19 +10,17 @@
   </div>
 </template>
 
-
 <script>
-
 export default {
   name: "App",
 
   methods: {
     DeleteLocal: function() {
-      localStorage.clear();
+      sessionStorage.clear();
       this.$router.push("/");
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -134,7 +132,6 @@ export default {
     color: #ff7b00;
   }
 }
-
 
 * {
   -webkit-box-sizing: border-box;

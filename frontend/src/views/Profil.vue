@@ -5,14 +5,15 @@
         <div class="col-md-4 mb-3">
           <div class="card">
             <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input" style="display:none;" />
-            <label for="file-input" :hidden="true">Image Avatar</label>
-            <i class="far fa-images d-flex ml-2 mt-2 iconeProfil" id="file-input"></i>
+            <label for="file-input">
+              <i class="far fa-images d-flex ml-2 mt-2 iconeProfil" id="file-imput" title="Importer votre avatar"></i>
+            </label>
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
                 <img :src="image" alt="Avatar" class="rounded-circle img_profil" width="150" />
                 <div class="mt-3">
                   <h4>{{ lastname }} {{ firstname }}</h4>
-                  <span v-if=" isAdmin == 1" class="labelAdmin">Administrateur</span>
+                  <span v-if="isAdmin == 1" class="labelAdmin">Administrateur</span>
                   <span v-else class="labelMembre">Membre</span>
                 </div>
               </div>
@@ -47,9 +48,52 @@
       </div>
     </div>
   </div>
+
+  <section v-if="isAdmin == 1">
+    <!--Titre Post Signaler-->
+    <div>
+      <i class="fas fa-exclamation-triangle" style="color:red"></i>
+      <h1>Poste Signaler</h1>
+      <i class="fas fa-exclamation-triangle" style="color:red"></i>
+    </div>
+    <!--Affichage des posts-->
+    <div class="container rounded border  shadow mt-5 card" v-for="post in posts" :key="post.id">
+      <div v-if="post.reported == 1">
+        <div class="card-header">
+          <div class="row mt-2">
+            <img :src="post.avatar" alt="" class="rounded-circle img_profil col-md-2" style="max-width: 8%" />
+            <div class="col-md-4">
+              <h3>{{ post.lastname }} {{ post.firstname }}</h3>
+            </div>
+            <div class="col-md-6">
+              <p>{{ moment(post.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>
+            </div>
+            <div class="col-md-1">
+              <i title="Supprimer votre message" class="fas fa-trash-alt mr-2 " style="color:red" @click="deleteMessage(post.id)"></i>
+              <i title="Approuver le message" class="fas fa-check" style="color:green" @click="appouveMessage(post.id)"></i>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h4>{{ post.title }}</h4>
+          <div class="row">
+            <p class="col-5 mt-3">
+              {{ post.content }}
+            </p>
+            <div class="col-md-4 offset-2" :hidden="post.image == null">
+              <img class="img-fluid mt-3" :src="post.image" alt="image post" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script>
+import moment from "moment";
+import "moment/locale/fr";
+
 export default {
   data: function() {
     return {
@@ -57,9 +101,14 @@ export default {
       lastname: "",
       firstname: "",
       image: "",
-     
+      posts: [],
+      title: "",
+      content: "",
+      file: null,
+      seen: false,
     };
   },
+
   methods: {
     deleteData: function(event) {
       event.preventDefault();
@@ -67,6 +116,32 @@ export default {
       this.$store.dispatch("deleteData").then(
         function() {
           self.$router.push("/");
+        },
+        function(error) {
+          console.log(error);
+        }
+      );
+    },
+
+    deleteMessage: function(postId) {
+      const self = this;
+      this.$store.dispatch("deleteMessage", postId).then(
+        function() {
+          console.log("Message supprimer");
+          self.$router.go();
+        },
+        function(error) {
+          console.log(error);
+        }
+      );
+    },
+
+    appouveMessage: function(postId) {
+      const self = this;
+      this.$store.dispatch("approuveMessage", postId).then(
+        function() {
+          console.log("Message Approuve");
+          self.$router.go();
         },
         function(error) {
           console.log(error);
@@ -95,18 +170,13 @@ export default {
   created: function() {
     const self = this;
     this.$store.dispatch("getInfo").then(function(response) {
-      console.log(response);
       (self.email = response.data.email), (self.lastname = response.data.lastname), (self.firstname = response.data.firstname), (self.image = response.data.avatar), (self.isAdmin = response.data.isAdmin);
     });
+    this.moment = moment;
+    this.$store.dispatch("getPost").then(function(response) {
+      self.posts = response.data;
+    });
   },
-  /**computed: {
-    Administration: () => {
-      if (post.idadmin == 0) {
-        return true;
-      }
-      return false;
-    },
-  },**/
 };
 </script>
 

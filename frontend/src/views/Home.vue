@@ -21,7 +21,7 @@
   </section>
 
   <!--Affichage des posts-->
-  <div class="container rounded border  shadow mt-5 card" v-for="post in posts" :key="post.id">
+  <div class="container rounded border  shadow mt-5 card" v-for="(post, i) in posts" :key="post.id">
     <div class="card-header">
       <div class="row mt-2">
         <img :src="post.avatar" alt="" class="rounded-circle img_profil col-md-2" style="max-width: 8%" />
@@ -32,7 +32,7 @@
           <p>{{ moment(post.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>
         </div>
         <div class="col-md-1">
-          <i title="Supprimer votre message" class="fas fa-trash-alt mr-2 " style="color:red" @click="deleteMessage(post.id)"></i>
+          <i title="Supprimer votre message" v-if="SeeTrash(post)" class="fas fa-trash-alt mr-2 " style="color:red" @click="deleteMessage(post.id)"></i>
           <i title="Signaler ce post" class="fas fa-comment-slash " style="color:blue" @click="reportMessage(post.id)"></i>
         </div>
       </div>
@@ -48,9 +48,11 @@
         </div>
       </div>
     </div>
-    <button @click="showComments(post.id)" class="btn btn_info  mb-3 ">Afficher les commentaires</button>
+    <button @click="SeenComment(i, open)" v-if="open == true" class="btn btn-info  mb-3 ">Afficher les commentaires</button>
+    <button @click="CloseComment(i, open)" v-else class="btn btn-danger mb-3 ">Cacher les commentaires</button>
+
     <!--Affiche les commentaire-->
-    <div>
+    <div v-if="i === activePost && !open">
       <!--Formulaire de commentaire-->
       <form class="mt-3">
         <div class="form-group d-flex justify-content-around">
@@ -58,30 +60,31 @@
           <h2>Poster un commentaire</h2>
           <i class="fa fa-comments" style="width: 64px;font-size: 38px;color: var(--red);"></i>
         </div>
-        <textarea v-model="content" aria-labelledby="comment" class="form-control" type="text" id="comment" placeholder="Votre commentaire..." style="width: 100%; height: 80px" />
-        <button @click="createComment" class="btn btn-success" style="margin-top: 5px; margin-bottom: 10px; width: 100%">Commenter</button>
+        <textarea v-model="post.comment" aria-labelledby="comment" class="form-control" type="text" id="comment" placeholder="Votre commentaire..." style="width: 100%; height: 80px" />
+        <button @click="createComment(post)" class="btn btn-success" style="margin-top: 5px; margin-bottom: 10px; width: 100%">Commenter</button>
       </form>
-      <div class="container rounded border shadow mt-5 card" v-for="comment in comments" :key="comment.id">
-        <div class="card-header">
-          <div class="row mt-2 ">
-            <img :src="post.avatar" alt="" class="rounded-circle img_profil col-md-2" style="max-width: 8%" />
-            <div class="col-md-4">
-              <h4>{{ comment.lastname }} {{ comment.firstname }}</h4>
-            </div>
-            <div class="col-md-5">
-              <p>{{ moment(post.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>
-            </div>
-            <div class="col-md-1">
-              <i title="Supprimer votre message" class="fas fa-trash-alt mr-2 " style="color:red" @click="deleteMessage(comment.post.id)"></i>
-              <i title="Signaler ce post" class="fas fa-comment-slash " style="color:blue" @click="reportMessage(comment.post.id)"></i>
+      <div>
+        <div class="container rounded border shadow mt-5 card" v-for="comment in post.comments" :key="comment.id">
+          <div class="card-header">
+            <div class="row mt-2 ">
+              <img :src="post.avatar" alt="" class="rounded-circle img_profil col-md-2" style="max-width: 8%" />
+              <div class="col-md-4">
+                <h4>{{ comment.lastname }} {{ comment.firstname }}</h4>
+              </div>
+              <div class="col-md-5">
+                <p>{{ moment(comment.created_at).format("DD MMMM YYYY [a] HH:mm ") }}</p>
+              </div>
+              <div class="col-md-1">
+                <i title="Supprimer votre message" v-if="SeeTrashComment(comment)" class="fas fa-trash-alt mr-2 " style="color:red" @click="deleteComment(comment.id)"></i>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <p class="col-12 mt-3">
-              {{ comment.content }}
-            </p>
+          <div class="card-body">
+            <div class="row">
+              <p class="col-12 mt-3">
+                {{ comment.content }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -92,6 +95,7 @@
 <script>
 import moment from "moment";
 import "moment/locale/fr";
+import jwt_decode from "jwt-decode";
 
 export default {
   name: "Home",
@@ -103,6 +107,8 @@ export default {
       title: "",
       content: "",
       file: null,
+      activePost: null,
+      open: true,
     };
   },
   created: function() {
@@ -134,19 +140,10 @@ export default {
       );
     },
 
-    showComments: function(postId) {
-      const self = this;
-      this.$store.dispatch("showComments", postId).then((comments) => {
-        console.log(comments.data);
-        self.comments = comments.data;
-      });
-    },
-
-    createComment: function(postId) {
+    createComment: function(post) {
       this.$store
-        .dispatch("createComment", {
+        .dispatch("createComment", post, {
           content: this.content,
-          postId,
         })
         .then(
           function() {
@@ -156,6 +153,36 @@ export default {
             console.log(error);
           }
         );
+    },
+
+    SeenComment(i) {
+      this.activePost = i;
+      this.open = false;
+    },
+
+    SeeTrash(post) {
+      let decode = jwt_decode(sessionStorage.getItem("token"));
+      let userId = decode.userId;
+      let isAdmin = decode.isAdmin;
+      if (userId == post.user_id || isAdmin == 1) {
+        return true;
+      }
+      return false;
+    },
+
+    SeeTrashComment(comment) {
+      let decode = jwt_decode(sessionStorage.getItem("token"));
+      let userId = decode.userId;
+      let isAdmin = decode.isAdmin;
+      if (userId == comment.user_id || isAdmin == 1) {
+        return true;
+      }
+      return false;
+    },
+
+    CloseComment(i) {
+      this.activePost = i;
+      this.open = true;
     },
 
     deleteMessage: function(postId) {
